@@ -10,9 +10,9 @@ WITH start_trips AS -- temporary table to hold starting location geographic data
     (SELECT 
         trips.ObjectId,
         trips.StartCenterlineID,
-        centerlines.STREETALL,
-        centerlines.ZIP5_L,
-        centerlines.CITYLEFT
+        centerlines.STREETALL AS StartStreet,
+        centerlines.ZIP5_L AS StartZip,
+        centerlines.CITYLEFT AS StartCity
     FROM 
         `erudite-host-336919.minneapolis_scooter_data_2020.scooters_2020` AS trips
     LEFT JOIN
@@ -24,9 +24,9 @@ end_trips AS -- temporary table to hold ending location geographic data
     (SELECT 
         trips.ObjectId,
         trips.EndCenterlineID,
-        centerlines.STREETALL,
-        centerlines.ZIP5_L,
-        centerlines.CITYLEFT
+        centerlines.STREETALL AS EndStreet,
+        centerlines.ZIP5_L AS EndZip,
+        centerlines.CITYLEFT AS EndCity
     FROM 
         `erudite-host-336919.minneapolis_scooter_data_2020.scooters_2020` AS trips
     LEFT JOIN
@@ -44,14 +44,14 @@ SELECT
     trips.EndTime,
     trips.StartCenterlineID,
     trips.StartCenterlineType,
-    start_trips.STREETALL,
-    start_trips.ZIP5_L,
-    start_trips.CITYLEFT,
+    start_trips.StartStreet,
+    start_trips.StartZip,
+    start_trips.StartCity,
     trips.EndCenterlineID,
     trips.EndCenterlineType,
-    end_trips.STREETALL,
-    end_trips.ZIP5_L,
-    end_trips.CITYLEFT
+    end_trips.EndStreet,
+    end_trips.EndZip,
+    end_trips.EndCity
 FROM 
     `erudite-host-336919.minneapolis_scooter_data_2020.scooters_2020` AS trips
 JOIN
@@ -62,3 +62,17 @@ JOIN
     end_trips 
 ON 
     trips.ObjectID = end_trips.ObjectID;
+    
+
+-- Extracting Date, Minute, Hour, Second from DateTime data
+    
+    SELECT 
+        *,
+        DATE(StartTime) AS StartDate,
+        EXTRACT(hour FROM StartTime) AS StartHour,
+        EXTRACT(minute FROM StartTime) AS StartMinute,
+        EXTRACT(second FROM StartTime) AS StartSecond,
+        EXTRACT(hour FROM EndTime) AS EndHour,
+        EXTRACT(minute FROM EndTime) AS EndMinute,
+        EXTRACT(second FROM EndTime) AS EndSecond
+FROM `erudite-host-336919.minneapolis_scooter_data_2020.scooters_merged`;

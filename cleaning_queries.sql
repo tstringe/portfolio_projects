@@ -72,7 +72,26 @@ ON
         EXTRACT(hour FROM StartTime) AS StartHour,
         EXTRACT(minute FROM StartTime) AS StartMinute,
         EXTRACT(second FROM StartTime) AS StartSecond,
+        DATE(EndTime) AS EndDate,
         EXTRACT(hour FROM EndTime) AS EndHour,
         EXTRACT(minute FROM EndTime) AS EndMinute,
         EXTRACT(second FROM EndTime) AS EndSecond
 FROM `erudite-host-336919.minneapolis_scooter_data_2020.scooters_merged`;
+
+-- Checking for Duplicate Trips
+
+SELECT 
+    *
+FROM 
+    `erudite-host-336919.minneapolis_scooter_data_2020.scooters_merged`
+WHERE 
+    TripID IN (
+        SELECT 
+            TripID 
+        FROM 
+            `erudite-host-336919.minneapolis_scooter_data_2020.scooters_merged`
+        GROUP BY 
+            TripID 
+        HAVING 
+            COUNT(1) > 1
+       )

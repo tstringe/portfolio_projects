@@ -95,3 +95,21 @@ WHERE
         HAVING 
             COUNT(1) > 1
        )
+       
+-- Removing Duplicates
+
+DELETE FROM 
+    `erudite-host-336919.minneapolis_scooter_data_2020.scooters_merged`
+WHERE TripID IN (
+    SELECT 
+        TripID 
+    FROM (
+        SELECT
+            TripId,
+            ROW_NUMBER() OVER (PARTITION BY TripID) AS rownum 
+            FROM 
+                `erudite-host-336919.minneapolis_scooter_data_2020.scooters_merged`
+    ) AS sub
+    WHERE 
+        rownum > 1
+);

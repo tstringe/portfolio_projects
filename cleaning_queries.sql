@@ -34,19 +34,26 @@ end_trips AS -- temporary table to hold ending location geographic data
     ON 
         trips.EndCenterlineID = FORMAT("%.*f",2,CAST(centerlines.GBSID AS FLOAT64) + .0001)) -- Converting integer Id's to decimals and casting as strings for future joining
 
-
 SELECT 
     trips.ObjectId,
     trips.TripID,
     trips.TripDuration,
     trips.TripDistance,
     trips.StartTime,
-    trips.EndTime,
+    Date(trips.StartTime) AS StartDate, --Extract date from start timestamp
+    EXTRACT(hour FROM trips.StartTime) AS StartHour, --Extract hour from start timestamp
+    EXTRACT(minute FROM trips.StartTime) AS StartMinute, --Extract minute from start timestamp
+    EXTRACT(second FROM trips.Starttime) AS StartSecond, --Extract second from start timestamp
     trips.StartCenterlineID,
     trips.StartCenterlineType,
     start_trips.StartStreet,
     start_trips.StartZip,
     start_trips.StartCity,
+    trips.EndTime,
+    DATE(trips.EndTime) AS EndDate, --Extract date from end timestamp
+    EXTRACT(hour FROM trips.EndTime) AS EndHour, --Extract hour from end timestamp
+    EXTRACT(minute FROM trips.EndTime) AS EndMinute, --Extract minute from end timestamp
+    EXTRACT(second FROM trips.Endtime) AS EndSecond, --Extract minute from end timestamp
     trips.EndCenterlineID,
     trips.EndCenterlineType,
     end_trips.EndStreet,
@@ -61,22 +68,7 @@ ON
 JOIN
     end_trips 
 ON 
-    trips.ObjectID = end_trips.ObjectID;
-    
-
--- Extracting Date, Minute, Hour, Second from DateTime data
-    
-    SELECT 
-        *,
-        DATE(StartTime) AS StartDate,
-        EXTRACT(hour FROM StartTime) AS StartHour,
-        EXTRACT(minute FROM StartTime) AS StartMinute,
-        EXTRACT(second FROM StartTime) AS StartSecond,
-        DATE(EndTime) AS EndDate,
-        EXTRACT(hour FROM EndTime) AS EndHour,
-        EXTRACT(minute FROM EndTime) AS EndMinute,
-        EXTRACT(second FROM EndTime) AS EndSecond
-FROM `erudite-host-336919.minneapolis_scooter_data_2020.scooters_merged`;
+    trips.ObjectID = end_trips.ObjectID;   
 
 -- Checking for Duplicate Trips
 

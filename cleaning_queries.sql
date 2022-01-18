@@ -39,21 +39,15 @@ SELECT
     trips.TripID,
     trips.TripDuration,
     trips.TripDistance,
-    trips.StartTime,
     Date(trips.StartTime) AS StartDate, --Extract date from start timestamp
-    EXTRACT(hour FROM trips.StartTime) AS StartHour, --Extract hour from start timestamp
-    EXTRACT(minute FROM trips.StartTime) AS StartMinute, --Extract minute from start timestamp
-    EXTRACT(second FROM trips.Starttime) AS StartSecond, --Extract second from start timestamp
+    Extract(time FROM DATETIME_TRUNC(DATE_ADD(StartTime, INTERVAL 5 Minute), Hour)) AS StartTime, -- Puts HH:59:59 into next hour and truncates to keep other times within the same hour
     trips.StartCenterlineID,
     trips.StartCenterlineType,
     start_trips.StartStreet,
     start_trips.StartZip,
     start_trips.StartCity,
-    trips.EndTime,
     DATE(trips.EndTime) AS EndDate, --Extract date from end timestamp
-    EXTRACT(hour FROM trips.EndTime) AS EndHour, --Extract hour from end timestamp
-    EXTRACT(minute FROM trips.EndTime) AS EndMinute, --Extract minute from end timestamp
-    EXTRACT(second FROM trips.Endtime) AS EndSecond, --Extract minute from end timestamp
+    Extract(time FROM DATETIME_TRUNC(DATE_ADD(StartTime, INTERVAL 5 Minute), Hour)) AS EndTime, -- Puts HH:59:59 into next hour and truncates to keep other times within the same hour
     trips.EndCenterlineID,
     trips.EndCenterlineType,
     end_trips.EndStreet,
@@ -68,7 +62,7 @@ ON
 JOIN
     end_trips 
 ON 
-    trips.ObjectID = end_trips.ObjectID;   
+    trips.ObjectID = end_trips.ObjectID;
 
 -- Checking for Duplicate Trips
 

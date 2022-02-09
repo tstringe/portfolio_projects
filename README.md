@@ -1,2 +1,3 @@
-# minneapolis_scooters
-Data Cleaning for Minneapolis Scooter Data
+# Portfolio Projects
+
+This repository houses code for the projects in my data analysis portfolio.
